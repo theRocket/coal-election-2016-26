@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coal Country, 2016</title>
+    <meta name="description" content="How the decline of coal mining in Ohio and Pennsylvania shaped the 2016 U.S. presidential election. An interactive D3 map." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <p class="kicker">Narrative visualization · 2017, rebuilt 2026</p>
+      <h1>Coal Country and the 2016 Election</h1>
+      <p class="dek">How did the importance of coal as an employer in rural <strong>Ohio</strong> and <strong>Pennsylvania</strong> affect the 2016 U.S. presidential election?</p>
+      <p class="byline">Ryan Rickerts · Originally the final project for CS 498 Data Visualization, University of Illinois Urbana-Champaign</p>
+      <p class="how">Scroll through four map scenes. Hover over or tap a state or county to see its data, and use <em>Focus on coal region</em> to zoom in on Ohio, Pennsylvania, and their neighbors.</p>
+      <a class="scroll-cue" href="#story">Begin ↓</a>
+    </header>
+
+    <main id="story" class="story">
+      <figure class="graphic" aria-live="polite">
+        <div class="graphic-head">
+          <h2 id="scene-title">Electoral votes, 2016</h2>
+          <button id="zoom-toggle" type="button" aria-pressed="false">Focus on coal region</button>
+        </div>
+        <div class="map-wrap">
+          <svg id="map" viewBox="0 0 975 610" role="img" aria-labelledby="scene-title"></svg>
+          <p class="loading" id="loading">Loading map…</p>
+        </div>
+        <div class="graphic-foot">
+          <div id="legend" class="legend"></div>
+          <div id="readout" class="readout"><span class="readout-hint">Hover or tap the map</span></div>
+        </div>
+      </figure>
+
+      <div class="steps">
+        <!-- SCENE 1 -->
+        <section class="step" data-scene="electoral" data-view="us">
+          <p class="step-num">1 · The Electoral College</p>
+          <h3>Swing states decided 2016</h3>
+          <p>Blue states went Democratic in the Electoral College and red states went Republican. Ohio and Pennsylvania are outlined. They are the two critical <strong>swing states</strong> this story focuses on.</p>
+        </section>
+        <section class="step" data-scene="electoral" data-view="region">
+          <h3>The Electoral College and “swing states”</h3>
+          <p>Donald Trump did not win the popular vote for U.S. President in 2016. He won on electoral votes alone, which has happened only four times in the history of electing 45 U.S. Presidents.</p>
+          <p>The key to this result is swing states. From one presidential election to the next, many states reliably vote Democratic or Republican; these are their traditional strongholds. About a dozen others can go either way depending on the hot-button issues and the mood of the time. They are also called battleground states, because that is where the election is won or lost.</p>
+          <p>Four swing states flipped from Obama (Democrat) in 2012 to Trump (Republican) in 2016: Iowa (6 votes), Wisconsin (10), Ohio (18), and Pennsylvania (20). These would have been prime targets for the Trump campaign's promises.</p>
+          <p>This piece zooms in on the two with the most active coal mines, Ohio and Pennsylvania. Together they hold most of those flipped electoral votes: 38 of 54, or 70%. Wisconsin and Iowa have no significant coal mining, so they are left out.</p>
+        </section>
+
+        <!-- SCENE 2 -->
+        <section class="step" data-scene="stateCoal" data-view="us">
+          <p class="step-num">2 · Coal employment</p>
+          <h3>Coal jobs fell almost everywhere</h3>
+          <p>Each coal-producing state is colored by the change in coal mining employment from 2014 to 2015. Hover over a state to see how much its number of mines and its mining workforce fell.</p>
+        </section>
+        <section class="step" data-scene="stateCoal" data-view="region">
+          <h3>Promises of coal jobs</h3>
+          <p>Among the major coal states, Ohio lost the largest share of its coal jobs (−21%), and Pennsylvania (−16%) and its neighbors Kentucky, West Virginia, and Indiana were not far behind. During the campaign, the <a href="http://www.chicagotribune.com/news/ct-coal-bust-illinois-met-20160918-story.html" target="_blank" rel="noopener">Chicago Tribune</a> covered the fate of coal mining in Illinois, which was also declining, though far less dramatically:</p>
+          <blockquote>
+            <p>Coal's decline has become an issue in the presidential race. Hillary Clinton stirred fear in the mines when she told a town hall in March that the shift to clean, renewable energy means “we're going to put a lot of coal miners and coal companies out of business.”</p>
+            <p>She added that she wants to bring new economic opportunities to coal country, but the damage was done: Donald Trump, who has vowed to “bring those miners back” by scrapping regulations, is seen by some as the industry's last hope.</p>
+            <p>“I think (the election) is pivotal,” said Bob Sandidge, owner of a mining services company and founder of an advocacy group called Coal Miner's Movement. “Hillary said she's going to carry on with the clean power plan, and that's going to be the final nail in the coffin.”</p>
+          </blockquote>
+        </section>
+
+        <!-- SCENE 3 -->
+        <section class="step" data-scene="countyCoal" data-view="us">
+          <p class="step-num">3 · Coal counties</p>
+          <h3>Where the mines are</h3>
+          <p>This scene shows coal mining by county. Darker counties produced more coal. Hover over a county to see its total number of mines (surface and underground) and the tons it produced.</p>
+        </section>
+        <section class="step" data-scene="countyCoal" data-view="region">
+          <h3>Coal country in Ohio and Pennsylvania</h3>
+          <p>Given their economic situation and the candidates' campaign promises, true or not, voters in Ohio's and Pennsylvania's coal counties had strong reasons to choose Trump over Clinton.</p>
+          <p>Ohio had 25 active mines in 2015, surface and underground, producing 17 million short tons. Pennsylvania had 195 mines producing 50 million short tons. Together that is 20% of the coal produced east of the Mississippi River.</p>
+        </section>
+        <section class="step" data-scene="countyCoal" data-view="region">
+          <h3>“Trump Digs Coal”</h3>
+          <p>Campaigning in these coal-producing states, Trump promised to bring back the glory days of coal, even though global economic forces matter far more than his promises. His team handed out signs reading “Trump Digs Coal,” and he said that if he was elected, “We're going to put the miners back to work.”</p>
+          <p>In June 2017, Trump's EPA administrator, Scott Pruitt, claimed the coal sector had added “almost 50,000 jobs” since the fourth quarter of 2016. That claim was <a href="http://www.factcheck.org/2017/06/scott-pruitt-coal-jobs/" target="_blank" rel="noopener">false</a>.</p>
+        </section>
+
+        <!-- SCENE 4 -->
+        <section class="step" data-scene="countyElection" data-view="region">
+          <p class="step-num">4 · The vote</p>
+          <h3>Counties swung Republican</h3>
+          <p>Each Ohio and Pennsylvania county is colored by the change in Republican presidential votes from 2012 to 2016. Coal-mining counties are outlined in brown. Hover over a county to see its 2012 and 2016 Republican vote totals.</p>
+          <p>Look at the Republican gains in the coal counties and the counties around them to see what a difference coal made.</p>
+        </section>
+        <section class="step" data-scene="countyElection" data-view="region">
+          <h3>A huge shift in Ohio and Pennsylvania</h3>
+          <p>Republicans often aim to win enough rural voters, through both turnout and party switching, to offset Democratic strength in dense urban centers. In the swing states of Ohio and Pennsylvania, the coal-mining counties made a big difference to that strategy.</p>
+          <p>Pennsylvania had not voted for a Republican president since George H.W. Bush in 1988. Trump won it by 68,236 votes, netting 20 electoral votes. Turnout rose 6.3%, and the shift toward Republicans from 2012 was 6.1 points.</p>
+          <p>Ohio voted for Obama in both previous elections: 50.67% to Mitt Romney's 47.69% in 2012, and 51.38% to John McCain's 46.80% in 2008. The popular vote shifted 11.1 points from Democrat to Republican between 2012 and 2016, and Trump beat Clinton by 8.1%, earning 18 electoral votes.</p>
+          <p>Trump won the presidency with 304 electoral votes to Clinton's 227; 270 are needed to win. Flipping just these two states back to Democrats would have left neither candidate with a majority.</p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="colophon">
+      <h2>Sources &amp; method</h2>
+      <p>Maps are drawn with <a href="https://d3js.org" target="_blank" rel="noopener">D3.js</a> from <a href="https://github.com/topojson/us-atlas" target="_blank" rel="noopener">U.S. Atlas</a> TopoJSON using <a href="https://github.com/topojson/topojson-client" target="_blank" rel="noopener">topojson-client</a>. The state and county data was compiled by hand. Election figures come from <a href="https://townhall.com/election/2016/president/" target="_blank" rel="noopener">Townhall.com</a> and coal employment and production data from the <a href="https://www.eia.gov/coal/data.php#production" target="_blank" rel="noopener">U.S. Energy Information Administration</a>.</p>
+      <p>The county election data covers Republican presidential votes in Ohio and Pennsylvania only. The Electoral College map assigns all of Maine to Clinton, although Trump won one of its congressional-district electors.</p>
+      <p><a href="https://github.com/theRocket/coal-election-2016-26" target="_blank" rel="noopener">Code on GitHub</a> · <a href="https://ryanrickerts.dev/UIUC-CS498-FinalProj/" target="_blank" rel="noopener">Original 2017 slideshow</a> · <a href="https://public.tableau.com/profile/ryan.rickerts#!/vizhome/OhioPenn_CoalProduction/Description" target="_blank" rel="noopener">Midterm version on Tableau Public</a></p>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

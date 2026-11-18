@@ -1,0 +1,19 @@
+{
+  "name": "coal-election-2016-26",
+  "private": true,
+  "version": "2.0.0",
+  "description": "The impact of the coal economy on the 2016 U.S. presidential election — an interactive D3 scrollytelling map.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
