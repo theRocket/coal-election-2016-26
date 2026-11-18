@@ -22,7 +22,9 @@ const cssVar = (name) =>
 
 const svg = d3.select("#map");
 const legendEl = document.getElementById("legend");
-const readoutEl = document.getElementById("readout");
+const tipEl = document.getElementById("tooltip");
+const hintEl = document.getElementById("hint");
+const mapWrap = document.querySelector(".map-wrap");
 const titleEl = document.getElementById("scene-title");
 const zoomBtn = document.getElementById("zoom-toggle");
 
@@ -61,7 +63,19 @@ const countyElectById = new Map(countyElect.map((d) => [d.id, d]));
 
 const states = feature(us, us.objects.states).features;
 const counties = feature(us, us.objects.counties).features;
-const stateName = new Map(stateCoal.map((d) => [d.id, d.State]));
+const STATE_NAMES = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado",
+  CT: "Connecticut", DE: "Delaware", DC: "District of Columbia", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas",
+  KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts",
+  MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana",
+  NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico",
+  NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio", OK: "Oklahoma",
+  OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota",
+  TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
+  WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+};
+const stateName = new Map(electoral.map((d) => [d.id, STATE_NAMES[d.name] ?? d.name]));
 
 // ---------- Scales ----------
 const employScale = d3.scaleDiverging([-25, 0, 25], d3.interpolateBrBG).clamp(true);
@@ -83,10 +97,15 @@ const scenes = {
     },
     showFocus: true,
     hint: "Hover or tap a state to see its electoral votes",
-    readout: (d) => {
+    tip: (d) => {
       const s = electById.get(d.id);
       if (!s) return null;
-      return `<strong>${s.name}</strong> · ${s.votes} electoral votes · <span class="tag ${s.winner === "D" ? "dem" : "rep"}">${s.winner === "D" ? "Clinton" : "Trump"}</span>`;
+      const dem = s.winner === "D";
+      return {
+        title: stateName.get(d.id) ?? s.name,
+        tag: { cls: dem ? "dem" : "rep", text: dem ? "Clinton" : "Trump" },
+        rows: [["Electoral votes", s.votes]],
+      };
     },
     legend: () =>
       swatches([
@@ -104,10 +123,17 @@ const scenes = {
       return s ? employScale(s.chg_no_employ) : cssVar("--land-muted");
     },
     hint: "Hover or tap a coal state to see its decline",
-    readout: (d) => {
+    tip: (d) => {
       const s = stateCoalById.get(d.id);
-      if (!s) return `<strong>${electById.get(d.id)?.name ?? "—"}</strong> · no coal mining employment`;
-      return `<strong>${s.State}</strong> · Mines: ${s.no_mines_2014} → ${s.no_mines_2015} (${pct(s.chg_no_mines)}) · Workers: ${fmt(s.no_employ_2014)} → ${fmt(s.no_employ_2015)} (${pct(s.chg_no_employ)})`;
+      if (!s) return { title: stateName.get(d.id) ?? electById.get(d.id)?.name ?? "—", note: "No coal mining employment" };
+      return {
+        title: s.State,
+        sub: "2014 → 2015",
+        rows: [
+          ["Mines", `${s.no_mines_2014} → ${s.no_mines_2015}`, pct(s.chg_no_mines)],
+          ["Workers", `${fmt(s.no_employ_2014)} → ${fmt(s.no_employ_2015)}`, pct(s.chg_no_employ)],
+        ],
+      };
     },
     legend: () =>
       ramp({
@@ -125,10 +151,18 @@ const scenes = {
       return c ? tonsScale(Math.max(1, c.total_prod_tons)) : cssVar("--land-muted");
     },
     hint: "Hover or tap a coal county to see its production",
-    readout: (d) => {
+    tip: (d) => {
       const c = countyCoalById.get(d.id);
       if (!c) return null;
-      return `<strong>${countyLabel(c.name)}, ${c.state}</strong> · ${c.total_mines} mine${c.total_mines === 1 ? "" : "s"} (${c.no_underground} underground, ${c.no_surface} surface) · ${fmt(c.total_prod_tons)} short tons`;
+      return {
+        title: `${countyLabel(c.name)}, ${c.state}`,
+        rows: [
+          ["Total mines", c.total_mines],
+          ["Underground", c.no_underground],
+          ["Surface", c.no_surface],
+          ["Produced", `${fmt(c.total_prod_tons)} tons`],
+        ],
+      };
     },
     legend: () =>
       ramp({
@@ -147,11 +181,19 @@ const scenes = {
     },
     showCoalOutline: true,
     hint: "Hover or tap an Ohio or Pennsylvania county",
-    readout: (d) => {
+    tip: (d) => {
       const c = countyElectById.get(d.id);
       if (!c) return null;
-      const coal = countyCoalById.has(d.id) ? ` · <span class="tag coal">coal county</span>` : "";
-      return `<strong>${countyLabel(c.cty_name)}, ${c.state}</strong> · Republican votes: ${fmt(c.votes_2012)} → ${fmt(c.votes_2016)} (${pct(c.change_repub * 100, 0)})${coal}`;
+      return {
+        title: `${countyLabel(c.cty_name)}, ${c.state}`,
+        tag: countyCoalById.has(d.id) ? { cls: "coal", text: "Coal county" } : null,
+        sub: "Republican presidential votes",
+        rows: [
+          ["2012", fmt(c.votes_2012)],
+          ["2016", fmt(c.votes_2016)],
+          ["Change", pct(c.change_repub * 100, 0)],
+        ],
+      };
     },
     legend: () =>
       ramp({
@@ -227,28 +269,69 @@ const hoverPath = root.append("path").attr("class", "hover-outline");
 // ---------- Interaction ----------
 let scene = null;
 
-function showReadout(event, d) {
-  const html = scenes[scene].readout(d);
-  if (html) {
-    readoutEl.innerHTML = html;
-    hoverPath.attr("d", path(d)).attr("opacity", 1);
-  } else {
-    clearReadout();
-  }
+function tipHtml(t) {
+  const tag = t.tag ? `<span class="tag ${t.tag.cls}">${t.tag.text}</span>` : "";
+  const sub = t.sub ? `<div class="tip-sub">${t.sub}</div>` : "";
+  const note = t.note ? `<div class="tip-note">${t.note}</div>` : "";
+  const rows = (t.rows ?? [])
+    .map(([k, v, chg]) => {
+      const cls = chg ? (chg.startsWith("−") ? "down" : chg.startsWith("+") ? "up" : "") : "";
+      return `<tr><th>${k}</th><td>${v}</td>${chg ? `<td class="chg ${cls}">${chg}</td>` : ""}</tr>`;
+    })
+    .join("");
+  return `<div class="tip-head"><strong>${t.title}</strong>${tag}</div>${sub}${note}${rows ? `<table>${rows}</table>` : ""}`;
 }
-function clearReadout() {
-  readoutEl.innerHTML = `<span class="readout-hint">${scenes[scene]?.hint ?? "Hover or tap the map"}</span>`;
+
+// Position the tooltip near the pointer, flipping so it stays inside the map area.
+function placeTip(event) {
+  const wrap = mapWrap.getBoundingClientRect();
+  const x = event.clientX - wrap.left;
+  const y = event.clientY - wrap.top;
+  const { offsetWidth: w, offsetHeight: h } = tipEl;
+  const gap = 14;
+  let left = x + gap;
+  let top = y - h - gap;
+  if (left + w > wrap.width) left = x - w - gap;
+  if (left < 0) left = Math.max(0, Math.min(wrap.width - w, x - w / 2));
+  if (top < 0) top = y + gap;
+  if (top + h > wrap.height) top = Math.max(0, wrap.height - h);
+  tipEl.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+}
+
+let tipFor = null;
+function showTip(event, d) {
+  const t = scenes[scene].tip(d);
+  if (!t) return hideTip();
+  if (tipFor !== d) {
+    tipEl.innerHTML = tipHtml(t);
+    tipFor = d;
+  }
+  tipEl.hidden = false;
+  placeTip(event);
+  hoverPath.attr("d", path(d)).attr("opacity", 1);
+}
+function hideTip() {
+  tipEl.hidden = true;
+  tipFor = null;
   hoverPath.attr("opacity", 0);
 }
 
 for (const sel of [statePaths, countyPaths]) {
-  sel.on("pointerenter", showReadout).on("click", showReadout).on("pointerleave", (e) => {
-    if (e.pointerType === "mouse") clearReadout();
-  });
+  sel
+    .on("pointerenter pointermove", (e, d) => {
+      if (e.pointerType === "mouse") showTip(e, d);
+    })
+    .on("click", (e, d) => {
+      e.stopPropagation();
+      showTip(e, d);
+    })
+    .on("pointerleave", (e) => {
+      if (e.pointerType === "mouse") hideTip();
+    });
 }
-svg.on("pointerleave", (e) => {
-  if (e.pointerType === "mouse") clearReadout();
-});
+// Touch: tapping anywhere off a shape dismisses the tooltip.
+document.addEventListener("click", hideTip);
+window.addEventListener("scroll", () => tipFor && !matchMedia("(hover: hover)").matches && hideTip(), { passive: true });
 
 // ---------- Zoom ----------
 function regionTransform() {
@@ -283,7 +366,10 @@ function render(name, animate = true) {
   titleEl.textContent = s.title;
   legendEl.innerHTML = s.legend();
   svg.attr("data-level", s.level);
-  if (changed) clearReadout();
+  if (changed) {
+    hideTip();
+    hintEl.textContent = s.hint;
+  }
 
   if (s.level === "state") {
     statePaths.transition("fill").duration(ms).attr("fill", s.fill);
