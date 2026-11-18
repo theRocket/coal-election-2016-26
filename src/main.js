@@ -31,7 +31,7 @@ const zoomBtn = document.getElementById("zoom-toggle");
 const path = d3.geoPath(); // us-10m-v1.json is pre-projected (Albers USA, 975×610)
 
 const str = (d) => ({ ...d, id: d.id.trim() });
-const [us, electoral, countyCoal, stateCoal, countyElect] = await Promise.all([
+const [us, electoral, countyCoal, stateCoal, countyElect, countySwing] = await Promise.all([
   d3.json(`${BASE}data/us-10m-v1.json`),
   d3.json(`${BASE}data/electoral2016.json`),
   d3.csv(`${BASE}data/coalprod_bycounty.csv`, (d) => ({
@@ -54,6 +54,13 @@ const [us, electoral, countyCoal, stateCoal, countyElect] = await Promise.all([
     votes_2016: +d.votes_2016,
     change_repub: +d.change_repub,
   })),
+  d3.csv(`${BASE}data/county_swing_2024_2026.csv`, (d) => ({
+    ...str(d),
+    margin24: +d.margin24,
+    margin26: +d.margin26,
+    swing: +d.swing,
+    flipped: d.flipped === "1",
+  })),
 ]);
 
 const electById = new Map(electoral.map((d) => [d.id, d]));
@@ -66,6 +73,14 @@ for (const s of electoral) {
 const countyCoalById = new Map(countyCoal.map((d) => [d.id, d]));
 const stateCoalById = new Map(stateCoal.map((d) => [d.id, d]));
 const countyElectById = new Map(countyElect.map((d) => [d.id, d]));
+const countySwingById = new Map(countySwing.map((d) => [d.id, d]));
+
+// Candidates for the 2024 → 2026 comparison: [Democrat, Republican]
+const CANDIDATES = {
+  pres24: { OH: ["Harris", "Trump"], PA: ["Harris", "Trump"] },
+  gov26: { OH: ["Acton", "Ramaswamy"], PA: ["Shapiro", "Garrity"] },
+};
+const marginLabel = (m, [dem, rep]) => (m >= 0 ? `${dem} +${m.toFixed(1)}` : `${rep} +${(-m).toFixed(1)}`);
 
 const states = feature(us, us.objects.states).features;
 const counties = feature(us, us.objects.counties).features;
@@ -90,6 +105,8 @@ const tonsScale = d3
   .scaleSequentialLog(tonsExtent, (t) => d3.interpolateYlOrBr(0.25 + 0.75 * t))
   .clamp(true);
 const shiftScale = d3.scaleDiverging([-0.2, 0, 0.6], (t) => d3.interpolateRdBu(1 - t)).clamp(true);
+// Margin swing in points: negative = toward Republicans (red), positive = toward Democrats (blue).
+const swingScale = d3.scaleDiverging([-30, 0, 30], d3.interpolateRdBu).clamp(true);
 
 // ---------- Scenes ----------
 const scenes = {
@@ -216,6 +233,43 @@ const scenes = {
         stops: [0, 0.25, 1],
       }) + swatches([{ outline: cssVar("--coal"), label: "Coal-mining county" }]),
   },
+
+  countySwing: {
+    title: "Swing in margin, 2024 President → 2026 Governor",
+    level: "county",
+    fill: (d) => {
+      const c = countySwingById.get(d.id);
+      return c ? swingScale(c.swing) : cssVar("--land-muted");
+    },
+    showCoalOutline: true,
+    showFlipOutline: true,
+    hint: "Hover or tap an Ohio or Pennsylvania county",
+    tip: (d) => {
+      const c = countySwingById.get(d.id);
+      if (!c) return null;
+      const sw = c.swing;
+      return {
+        title: `${countyLabel(c.name)}, ${c.state}`,
+        tag: c.flipped ? { cls: "dem", text: "Flipped D" } : null,
+        sub: countyCoalById.has(d.id) ? "Coal-mining county" : null,
+        rows: [
+          ["2024 President", marginLabel(c.margin24, CANDIDATES.pres24[c.state])],
+          ["2026 Governor", marginLabel(c.margin26, CANDIDATES.gov26[c.state])],
+          ["Swing", `${sw >= 0 ? "D" : "R"} +${Math.abs(sw).toFixed(1)} pts`],
+        ],
+      };
+    },
+    legend: () =>
+      ramp({
+        title: "Margin swing (percentage points)",
+        interpolator: (t) => swingScale(-30 + 60 * t),
+        labels: ["R +30", "0", "D +30"],
+      }) +
+      swatches([
+        { outline: cssVar("--focus"), label: "Flipped R → D" },
+        { outline: cssVar("--coal"), label: "Coal-mining county" },
+      ]),
+  },
 };
 
 // ---------- Legend helpers ----------
@@ -271,6 +325,11 @@ const coalOutline = root
   .append("path")
   .attr("class", "coal-outline")
   .attr("d", path({ type: "FeatureCollection", features: counties.filter((c) => countyCoalById.has(c.id)) }));
+
+const flipOutline = root
+  .append("path")
+  .attr("class", "flip-outline")
+  .attr("d", path({ type: "FeatureCollection", features: counties.filter((c) => countySwingById.get(c.id)?.flipped) }));
 
 const focusOutline = root
   .append("path")
@@ -391,6 +450,7 @@ function render(name, animate = true) {
   }
   focusOutline.classed("on", !!s.showFocus);
   coalOutline.classed("on", !!s.showCoalOutline);
+  flipOutline.classed("on", !!s.showFlipOutline);
 }
 
 // ---------- Scrollytelling ----------
