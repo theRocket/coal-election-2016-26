@@ -31,7 +31,7 @@ const zoomBtn = document.getElementById("zoom-toggle");
 const path = d3.geoPath(); // us-10m-v1.json is pre-projected (Albers USA, 975×610)
 
 const str = (d) => ({ ...d, id: d.id.trim() });
-const [us, electoral, countyCoal, stateCoal, countyElect, countySwing] = await Promise.all([
+const [us, electoral, countyCoal, stateCoal, countyElect, countySwing, ohSenate, house, cd] = await Promise.all([
   d3.json(`${BASE}data/us-10m-v1.json`),
   d3.json(`${BASE}data/electoral2016.json`),
   d3.csv(`${BASE}data/coalprod_bycounty.csv`, (d) => ({
@@ -61,6 +61,23 @@ const [us, electoral, countyCoal, stateCoal, countyElect, countySwing] = await P
     swing: +d.swing,
     flipped: d.flipped === "1",
   })),
+  d3.csv(`${BASE}data/oh_senate_2024_2026.csv`, (d) => ({
+    ...str(d),
+    margin24: +d.margin24,
+    margin26: +d.margin26,
+    swing: +d.swing,
+    flipped: d.flipped === "1",
+  })),
+  d3.csv(`${BASE}data/house_2026_oh_pa.csv`, (d) => ({
+    ...str(d),
+    district: +d.district,
+    dem_pct: +d.dem_pct,
+    rep_pct: +d.rep_pct,
+    margin: +d.margin,
+    flipped: d.flipped === "1",
+  })),
+  // 2026 (120th Congress) district boundaries, pre-projected to match us-10m-v1.json
+  d3.json(`${BASE}data/districts_2026_oh_pa.json`),
 ]);
 
 const electById = new Map(electoral.map((d) => [d.id, d]));
@@ -74,6 +91,15 @@ const countyCoalById = new Map(countyCoal.map((d) => [d.id, d]));
 const stateCoalById = new Map(stateCoal.map((d) => [d.id, d]));
 const countyElectById = new Map(countyElect.map((d) => [d.id, d]));
 const countySwingById = new Map(countySwing.map((d) => [d.id, d]));
+const ohSenateById = new Map(ohSenate.map((d) => [d.id, d]));
+const houseById = new Map(house.map((d) => [d.id, d]));
+const districts = feature(cd, cd.objects.districts).features;
+const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] ?? "th");
+const seatCount = (st, key = "winner") => {
+  const hs = house.filter((h) => h.state === st);
+  const count = (p, k) => hs.filter((h) => h[k] === p).length;
+  return { D: count("D", key), R: count("R", key) };
+};
 
 // Candidates for the 2024 → 2026 comparison: [Democrat, Republican]
 const CANDIDATES = {
@@ -107,6 +133,8 @@ const tonsScale = d3
 const shiftScale = d3.scaleDiverging([-0.2, 0, 0.6], (t) => d3.interpolateRdBu(1 - t)).clamp(true);
 // Margin swing in points: negative = toward Republicans (red), positive = toward Democrats (blue).
 const swingScale = d3.scaleDiverging([-30, 0, 30], d3.interpolateRdBu).clamp(true);
+const senateSwingScale = d3.scaleDiverging([-15, 0, 15], d3.interpolateRdBu).clamp(true);
+const houseMarginScale = d3.scaleDiverging([-40, 0, 40], d3.interpolateRdBu).clamp(true);
 
 // ---------- Scenes ----------
 const scenes = {
@@ -242,7 +270,7 @@ const scenes = {
       return c ? swingScale(c.swing) : cssVar("--land-muted");
     },
     showCoalOutline: true,
-    showFlipOutline: true,
+    flips: () => counties.filter((c) => countySwingById.get(c.id)?.flipped),
     hint: "Hover or tap an Ohio or Pennsylvania county",
     tip: (d) => {
       const c = countySwingById.get(d.id);
@@ -269,6 +297,87 @@ const scenes = {
         { outline: cssVar("--focus"), label: "Flipped R → D" },
         { outline: cssVar("--coal"), label: "Coal-mining county" },
       ]),
+  },
+
+  ohSenate: {
+    title: "Ohio Senate: Sherrod Brown's swing, 2024 → 2026",
+    level: "county",
+    fill: (d) => {
+      const c = ohSenateById.get(d.id);
+      return c ? senateSwingScale(c.swing) : cssVar("--land-muted");
+    },
+    showCoalOutline: true,
+    flips: () => counties.filter((c) => ohSenateById.get(c.id)?.flipped),
+    hint: "Hover or tap an Ohio county",
+    tip: (d) => {
+      const c = ohSenateById.get(d.id);
+      if (!c) return null;
+      return {
+        title: `${countyLabel(c.name)}, OH`,
+        tag: c.flipped ? { cls: "dem", text: "Flipped D" } : null,
+        sub: countyCoalById.has(d.id) ? "Coal-mining county" : null,
+        rows: [
+          ["2024 vs. Moreno", marginLabel(c.margin24, ["Brown", "Moreno"])],
+          ["2026 vs. Husted", marginLabel(c.margin26, ["Brown", "Husted"])],
+          ["Swing", `${c.swing >= 0 ? "D" : "R"} +${Math.abs(c.swing).toFixed(1)} pts`],
+        ],
+      };
+    },
+    legend: () =>
+      ramp({
+        title: "Swing in Brown's margin (points)",
+        interpolator: (t) => senateSwingScale(-15 + 30 * t),
+        labels: ["R +15", "0", "D +15"],
+      }) +
+      swatches([
+        { outline: cssVar("--focus"), label: "Flipped to Brown" },
+        { outline: cssVar("--coal"), label: "Coal-mining county" },
+      ]),
+  },
+
+  house: {
+    title: "U.S. House, 2026: winning margin by district",
+    level: "district",
+    fill: (d) => {
+      const h = houseById.get(d.id);
+      return h ? houseMarginScale(h.margin) : cssVar("--land-muted");
+    },
+    showCoalOutline: true,
+    flips: () => districts.filter((d) => houseById.get(d.id)?.flipped),
+    hint: "Hover or tap a congressional district",
+    tip: (d) => {
+      const h = houseById.get(d.id);
+      if (!h) return null;
+      const rows = [[`${h.dem_name} (D)`, `${h.dem_pct.toFixed(1)}%`]];
+      if (h.rep_name) rows.push([`${h.rep_name} (R)`, `${h.rep_pct.toFixed(1)}%`]);
+      rows.push(["Margin", marginLabel(h.margin, ["D", "R"])], ["Held in 2024 by", h.winner_2024 === "D" ? "Democrats" : "Republicans"]);
+      return {
+        title: `${h.state === "OH" ? "Ohio" : "Pennsylvania"}'s ${ordinal(h.district)} District`,
+        tag: h.flipped
+          ? { cls: h.winner === "D" ? "dem" : "rep", text: `Flipped ${h.winner}` }
+          : { cls: h.winner === "D" ? "dem" : "rep", text: h.winner === "D" ? "Dem. hold" : "Rep. hold" },
+        sub: h.source,
+        rows,
+      };
+    },
+    legend: () => {
+      const seats = (st) => {
+        const now = seatCount(st), was = seatCount(st, "winner_2024");
+        return `${st === "OH" ? "Ohio" : "Pennsylvania"}: ${now.D} D – ${now.R} R (was ${was.D}–${was.R})`;
+      };
+      return (
+        ramp({
+          title: "Winning margin (points)",
+          interpolator: (t) => houseMarginScale(-40 + 80 * t),
+          labels: ["R +40", "0", "D +40"],
+        }) +
+        swatches([
+          { outline: cssVar("--focus"), label: "Flipped R → D" },
+          { outline: cssVar("--coal"), label: "Coal-mining county" },
+        ]) +
+        `<div class="seat-summary">${seats("OH")}<br>${seats("PA")}</div>`
+      );
+    },
   },
 };
 
@@ -318,6 +427,10 @@ const statePaths = root
   .join("path")
   .attr("d", path);
 
+const districtG = root.append("g").attr("class", "districts");
+const districtPaths = districtG.selectAll("path").data(districts).join("path").attr("d", path);
+districtG.append("path").attr("class", "district-mesh").attr("d", path(mesh(cd, cd.objects.districts, (a, b) => a !== b)));
+
 root.append("path").attr("class", "state-mesh").attr("d", path(mesh(us, us.objects.states, (a, b) => a !== b)));
 root.append("path").attr("class", "nation-outline").attr("d", path(mesh(us, us.objects.states, (a, b) => a === b)));
 
@@ -326,10 +439,8 @@ const coalOutline = root
   .attr("class", "coal-outline")
   .attr("d", path({ type: "FeatureCollection", features: counties.filter((c) => countyCoalById.has(c.id)) }));
 
-const flipOutline = root
-  .append("path")
-  .attr("class", "flip-outline")
-  .attr("d", path({ type: "FeatureCollection", features: counties.filter((c) => countySwingById.get(c.id)?.flipped) }));
+// Outline of whatever the current scene marks as flipped (counties or districts); set in render().
+const flipOutline = root.append("path").attr("class", "flip-outline");
 
 const focusOutline = root
   .append("path")
@@ -388,7 +499,7 @@ function hideTip() {
   hoverPath.attr("opacity", 0);
 }
 
-for (const sel of [statePaths, countyPaths]) {
+for (const sel of [statePaths, countyPaths, districtPaths]) {
   sel
     .on("pointerenter pointermove", (e, d) => {
       if (e.pointerType === "mouse") showTip(e, d);
@@ -445,12 +556,16 @@ function render(name, animate = true) {
 
   if (s.level === "state") {
     statePaths.transition("fill").duration(ms).attr("fill", s.fill);
+  } else if (s.level === "district") {
+    districtPaths.transition("fill").duration(ms).attr("fill", s.fill);
+    countyPaths.transition("fill").duration(ms).attr("fill", cssVar("--land-muted"));
   } else {
     countyPaths.transition("fill").duration(ms).attr("fill", s.fill);
   }
   focusOutline.classed("on", !!s.showFocus);
   coalOutline.classed("on", !!s.showCoalOutline);
-  flipOutline.classed("on", !!s.showFlipOutline);
+  if (s.flips) flipOutline.attr("d", path({ type: "FeatureCollection", features: s.flips() }));
+  flipOutline.classed("on", !!s.flips);
 }
 
 // ---------- Scrollytelling ----------

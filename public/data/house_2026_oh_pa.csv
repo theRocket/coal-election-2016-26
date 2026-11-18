@@ -1,0 +1,33 @@
+id,state,district,dem_name,dem_pct,rep_name,rep_pct,total_votes,margin,winner,winner_2024,flipped,source
+3901,OH,1,Greg Landsman,54.4,Eric Conroy,42.9,324471,11.5,D,D,0,Ohio SOS unofficial canvass
+3902,OH,2,Jen Mazzuckelli,35.8,David J. Taylor,64.2,273049,-28.4,R,R,0,Ohio SOS unofficial canvass
+3903,OH,3,Joyce Beatty,77.2,Cleophus Dulaney,22.8,300332,54.4,D,D,0,Ohio SOS unofficial canvass
+3904,OH,4,Joshua D. Kolasinski,31.3,Jim Jordan,64.5,305586,-33.2,R,R,0,Ohio SOS unofficial canvass
+3905,OH,5,Brian A. Shaver,42.6,Bob Latta,54.3,301101,-11.7,R,R,0,Ohio SOS unofficial canvass
+3906,OH,6,Elizabeth Kirtley,39.6,Michael A. Rulli,60.4,270985,-20.8,R,R,0,Ohio SOS unofficial canvass
+3907,OH,7,Brian Poindexter,54.9,Max Miller,45.0,329033,9.9,D,R,1,Ohio SOS unofficial canvass
+3908,OH,8,Vanessa Enoch,47.9,Warren Davidson,52.1,323517,-4.2,R,R,0,Ohio SOS unofficial canvass
+3909,OH,9,Marcy Kaptur,52.7,Derek Merrin,47.2,302311,5.5,D,D,0,Ohio SOS unofficial canvass
+3910,OH,10,Kristina Knickerbocker,49.3,Mike Turner,47.7,302016,1.6,D,R,1,Ohio SOS unofficial canvass
+3911,OH,11,Shontel M. Brown,83.5,Mike Kirchner,16.5,263344,67.0,D,D,0,Ohio SOS unofficial canvass
+3912,OH,12,Jerrad Christian,40.6,Troy Balderson,59.4,323137,-18.8,R,R,0,Ohio SOS unofficial canvass
+3913,OH,13,Emilia Sykes,60.0,Carey Coleman,38.4,317775,21.6,D,D,0,Ohio SOS unofficial canvass
+3914,OH,14,Maria Jukic,45.0,David P. Joyce,55.0,326118,-10.0,R,R,0,Ohio SOS unofficial canvass
+3915,OH,15,Don Leonard,51.9,Mike Carey,45.3,287756,6.6,D,R,1,Ohio SOS unofficial canvass
+4201,PA,1,Bob Harvie,52.9,Brian Fitzpatrick,47.1,359181,5.8,D,R,1,"NBC News, 99% reporting"
+4202,PA,2,Brendan Boyle,80.9,Jessica Arriaga,19.1,186447,61.8,D,D,0,"NBC News, 99% reporting"
+4203,PA,3,Chris Rabb,93.6,,0.0,276065,93.6,D,D,0,"NBC News, 99% reporting"
+4204,PA,4,Madeleine Dean,67.3,Aurora Stuski,32.7,348213,34.6,D,D,0,"NBC News, 99% reporting"
+4205,PA,5,Mary Gay Scanlon,72.2,Nick Manganaro,27.8,299060,44.4,D,D,0,"NBC News, 99% reporting"
+4206,PA,6,Chrissy Houlahan,64.5,Marty Young,35.5,312081,29.0,D,D,0,"NBC News, 99% reporting"
+4207,PA,7,Bob Brooks,56.3,Ryan Mackenzie,43.7,296102,12.6,D,R,1,"NBC News, 99% reporting"
+4208,PA,8,Paige Cognetti,54.5,Rob Bresnahan Jr.,45.5,282799,9.0,D,R,1,"NBC News, 99% reporting"
+4209,PA,9,Rachel Wallace,38.6,Dan Meuser,61.4,269779,-22.8,R,R,0,"NBC News, 99% reporting"
+4210,PA,10,Janelle Stelson,55.2,Scott Perry,44.8,317428,10.4,D,R,1,"NBC News, 99% reporting"
+4211,PA,11,Nancy Mannion,44.6,Lloyd Smucker,55.4,303119,-10.8,R,R,0,"NBC News, 99% reporting"
+4212,PA,12,Summer Lee,65.7,James Hayes,34.3,300095,31.4,D,D,0,"NBC News, 99% reporting"
+4213,PA,13,Beth Farnham,32.6,John Joyce,67.4,281645,-34.8,R,R,0,"NBC News, 99% reporting"
+4214,PA,14,Alan Bradstock,42.6,Guy Reschenthaler,57.4,277670,-14.8,R,R,0,"NBC News, 99% reporting"
+4215,PA,15,Ray Bilger,36.2,Glenn Thompson,63.8,268549,-27.6,R,R,0,"NBC News, 99% reporting"
+4216,PA,16,Justin Wagner,46.2,Mike Kelly,53.8,287383,-7.6,R,R,0,"NBC News, 99% reporting"
+4217,PA,17,Chris Deluzio,63.0,Tony Guy,37.0,333258,26.0,D,D,0,"NBC News, 99% reporting"

@@ -227,6 +227,13 @@ blockquote {
 #map[data-level="state"] .counties,
 #map[data-level="state"] .county-mesh { opacity: 0; pointer-events: none; }
 #map[data-level="county"] .states { display: none; }
+#map[data-level="district"] .states { display: none; }
+#map[data-level="district"] .counties { pointer-events: none; }
+#map[data-level="district"] .state-mesh { stroke: var(--state-mesh); stroke-width: 0.9; }
+.districts { opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+#map[data-level="district"] .districts { opacity: 1; pointer-events: auto; }
+.districts path { cursor: pointer; }
+.district-mesh { fill: none; stroke: var(--mesh); stroke-width: 1.2; vector-effect: non-scaling-stroke; stroke-linejoin: round; pointer-events: none; }
 .counties path, .states path { cursor: pointer; }
 
 /* legend + readout */
@@ -249,6 +256,7 @@ blockquote {
 .ramp-labels span:last-child { transform: translateX(-100%); }
 
 .hint { margin: 0; color: var(--muted); }
+.seat-summary { color: var(--text); font-weight: 500; }
 
 /* hover pop-up */
 .tooltip {
@@ -323,3 +331,4 @@ blockquote {
   .steps { position: relative; z-index: 1; padding: 30vh 0 40vh; }
   .step { margin-bottom: 55vh; opacity: 1; }
 }
+.step p.fine { font: 12px/1.45 var(--sans); color: var(--muted); }
