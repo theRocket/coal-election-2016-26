@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Coal Country, 2016</title>
-    <meta name="description" content="How the decline of coal mining in Ohio and Pennsylvania shaped the 2016 U.S. presidential election. An interactive D3 map." />
+    <title>Coal Country, 2016–2026</title>
+    <meta name="description" content="How coal country in Ohio and Pennsylvania helped elect Trump in 2016, and how both states swung back toward Democrats in the 2026 midterms. An interactive D3 map." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,11 +13,11 @@
   </head>
   <body>
     <header class="hero">
-      <p class="kicker">Narrative visualization · 2017, rebuilt 2026</p>
-      <h1>Coal Country and the 2016 Election</h1>
-      <p class="dek">How did the importance of coal as an employer in rural <strong>Ohio</strong> and <strong>Pennsylvania</strong> affect the 2016 U.S. presidential election?</p>
-      <p class="byline">Ryan Rickerts · Originally the final project for CS 498 Data Visualization, University of Illinois Urbana-Champaign</p>
-      <p class="how">Scroll through four map scenes. Hover over or tap a state or county to see its data, and use <em>Focus on coal region</em> to zoom in on Ohio, Pennsylvania, and their neighbors.</p>
+      <p class="kicker">Narrative visualization · 2017 original, expanded 2026</p>
+      <h1>Coal Country, 2016–2026</h1>
+      <p class="dek">In 2016, the coal-mining counties of <strong>Ohio</strong> and <strong>Pennsylvania</strong> helped carry both swing states, and the Electoral College, for Donald Trump. Ten years later, in the 2026 midterms, both states swung sharply back toward Democrats. This story follows coal country from one election to the other.</p>
+      <p class="byline">Ryan Rickerts · Originally the final project for CS 498 Data Visualization, University of Illinois Urbana-Champaign; expanded with 2026 midterm results</p>
+      <p class="how">Scroll through seven map scenes. The first four are the original 2016 analysis: the Electoral College, coal jobs, coal counties, and the county vote. The last three cover 2026: the governor's races, Ohio's Senate race, and the U.S. House. Hover over or tap a state, county, or district to see its data, and use <em>Focus on coal region</em> to zoom in on Ohio, Pennsylvania, and their neighbors.</p>
       <a class="scroll-cue" href="#story">Begin ↓</a>
     </header>
 
@@ -121,13 +121,42 @@
           <p>There was no presidential race in 2026, so this compares the 2024 presidential vote with the 2026 governor's race. Midterm turnout was lower: about 79% of 2024's total in Ohio and 71% in Pennsylvania. Governor races also reflect the candidates themselves. Shapiro was running for reelection, while Ohio's race was for an open seat.</p>
           <p>The 2026 results are unofficial until each state certifies them, so a few numbers may still change.</p>
         </section>
+
+        <!-- SCENE 6 -->
+        <section class="step" data-scene="ohSenate" data-view="region">
+          <p class="step-num">6 · Ohio Senate</p>
+          <h3>Sherrod Brown flips Ohio's Senate seat</h3>
+          <p><strong>Sherrod Brown is the projected winner</strong> of Ohio's 2026 special Senate election, a <strong>flip from Republican to Democratic</strong>. NBC News reports him with 50.0% of the vote (2,304,154 votes) against Republican Jon Husted, who was appointed to the seat in January 2025 after JD Vance became vice president.</p>
+          <p>The map compares Brown's margin in each county with his 2024 race, which he lost to Bernie Moreno by 3.6 points. Counties with a bold outline flipped to Brown.</p>
+        </section>
+        <section class="step" data-scene="ohSenate" data-view="region">
+          <h3>The same candidate, a different year</h3>
+          <p>Every Ohio county moved toward Brown, by 2 to 13 points, for a statewide swing of 8.5 points, from −3.6 to +4.9 in the Secretary of State's unofficial count. He carried 15 counties, up from 8, flipping Delaware, Erie, Lake, Mahoning, Portage, Trumbull, and Wood.</p>
+          <p>That swing is smaller than in the governor's race because Brown already ran far ahead of his party in 2024, finishing 7.6 points better than Kamala Harris's margin in Ohio.</p>
+          <p>Ohio's coal counties swung slightly more than the rest (a median of 8.0 points versus 7.3), but Brown won none of the 12 in either year.</p>
+        </section>
+
+        <!-- SCENE 7 -->
+        <section class="step" data-scene="house" data-view="region">
+          <p class="step-num">7 · U.S. House</p>
+          <h3>Seven House seats change hands</h3>
+          <p>The map now shows each 2026 congressional district, colored by the winner's margin. Districts with a bold outline flipped from Republican to Democratic. Ohio redrew its districts for 2026, so its flips are counted by district number.</p>
+          <p>Democrats flipped three Ohio seats, the 7th (Brian Poindexter over Max Miller), the 10th (Kristina Knickerbocker over Mike Turner), and the 15th (Don Leonard over Mike Carey), turning a 10–5 Republican delegation into 8–7 Democratic.</p>
+          <p>In Pennsylvania they flipped four, the 1st (Bob Harvie over Brian Fitzpatrick), the 7th (Bob Brooks over Ryan Mackenzie), the 8th (Paige Cognetti over Rob Bresnahan Jr.), and the 10th (Janelle Stelson over Scott Perry), going from 10–7 Republican to 11–6 Democratic.</p>
+        </section>
+        <section class="step" data-scene="house" data-view="region">
+          <h3>Coal country's districts stay red</h3>
+          <p>Most coal counties sit in districts Republicans kept: 11 of Ohio's 12, in the 2nd, 6th, and 12th districts, and 21 of Pennsylvania's 26, including 13 in the 14th and 15th districts alone. Pennsylvania's flipped 7th, 8th, and 10th districts each include one coal county.</p>
+          <p>Ten years after coal country helped carry Ohio and Pennsylvania for Trump, both states swung back toward Democrats at nearly every level of the ballot. The swing reached coal country too, but mostly narrowed Republican margins there rather than reversing them.</p>
+          <p class="fine">Counties are assigned to the district that contains their center. Pennsylvania House figures are from NBC News at 99% of the expected vote; Ohio's are from the Secretary of State's unofficial canvass.</p>
+        </section>
       </div>
     </main>
 
     <footer class="colophon">
       <h2>Sources &amp; method</h2>
       <p>Maps are drawn with <a href="https://d3js.org" target="_blank" rel="noopener">D3.js</a> from <a href="https://github.com/topojson/us-atlas" target="_blank" rel="noopener">U.S. Atlas</a> TopoJSON using <a href="https://github.com/topojson/topojson-client" target="_blank" rel="noopener">topojson-client</a>. The state and county data was compiled by hand. Election figures come from <a href="https://townhall.com/election/2016/president/" target="_blank" rel="noopener">Townhall.com</a> and coal employment and production data from the <a href="https://www.eia.gov/coal/data.php#production" target="_blank" rel="noopener">U.S. Energy Information Administration</a>.</p>
-      <p>The 2012–2016 county election data covers Republican presidential votes in Ohio and Pennsylvania only. The 2024–2026 swing compares each county's margin (Democratic minus Republican, as a share of all votes in the race) in the 2024 presidential race and the 2026 governor's race. Sources: the <a href="https://www.electionreturns.pa.gov/" target="_blank" rel="noopener">Pennsylvania Department of State</a> for both Pennsylvania races, the <a href="https://liveresults.ohiosos.gov/" target="_blank" rel="noopener">Ohio Secretary of State's</a> unofficial canvass (downloaded November 18, 2026) for Ohio's 2026 race, and Ohio's certified 2024 county results as tabulated on <a href="https://en.wikipedia.org/wiki/2024_United_States_presidential_election_in_Ohio" target="_blank" rel="noopener">Wikipedia</a>. The Electoral College map shows pledged electors (Clinton 232, Trump 306). Maine splits its electors by congressional district: it is colored for Clinton, who won it statewide and took 3 of its 4 electors, while Trump took the other 1.</p>
+      <p>The 2012–2016 county election data covers Republican presidential votes in Ohio and Pennsylvania only. The 2024–2026 swing compares each county's margin (Democratic minus Republican, as a share of all votes in the race) in the 2024 presidential race and the 2026 governor's race. Sources: the <a href="https://www.electionreturns.pa.gov/" target="_blank" rel="noopener">Pennsylvania Department of State</a> for both Pennsylvania races, the <a href="https://liveresults.ohiosos.gov/" target="_blank" rel="noopener">Ohio Secretary of State's</a> unofficial canvass (downloaded November 18, 2026) for Ohio's 2026 race, and Ohio's certified 2024 county results as tabulated on <a href="https://en.wikipedia.org/wiki/2024_United_States_presidential_election_in_Ohio" target="_blank" rel="noopener">Wikipedia</a>. The Ohio Senate scene uses the same Ohio 2026 canvass and the certified 2024 Senate county results as tabulated on <a href="https://en.wikipedia.org/wiki/2024_United_States_Senate_election_in_Ohio" target="_blank" rel="noopener">Wikipedia</a>. Brown's statewide vote total in the text is from <a href="https://www.nbcnews.com/politics/2026-special-elections/ohio-senate-results" target="_blank" rel="noopener">NBC News</a>. The House scene uses 2026 district boundaries from the <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html" target="_blank" rel="noopener">Census Bureau's TIGER/Line files</a> (120th Congress), Ohio results from the Secretary of State, Pennsylvania results from <a href="https://www.nbcnews.com/politics/2026-elections/pennsylvania-house-results" target="_blank" rel="noopener">NBC News</a> (99% reporting, November 17, 2026), and 2024 winners from Wikipedia's <a href="https://en.wikipedia.org/wiki/2024_United_States_House_of_Representatives_elections_in_Ohio" target="_blank" rel="noopener">Ohio</a> and <a href="https://en.wikipedia.org/wiki/2024_United_States_House_of_Representatives_elections_in_Pennsylvania" target="_blank" rel="noopener">Pennsylvania</a> House pages. The Electoral College map shows pledged electors (Clinton 232, Trump 306). Maine splits its electors by congressional district: it is colored for Clinton, who won it statewide and took 3 of its 4 electors, while Trump took the other 1.</p>
       <p><a href="https://github.com/theRocket/coal-election-2016-26" target="_blank" rel="noopener">Code on GitHub</a> · <a href="https://ryanrickerts.dev/UIUC-CS498-FinalProj/" target="_blank" rel="noopener">Original 2017 slideshow</a> · <a href="https://public.tableau.com/profile/ryan.rickerts#!/vizhome/OhioPenn_CoalProduction/Description" target="_blank" rel="noopener">Midterm version on Tableau Public</a></p>
     </footer>
 
