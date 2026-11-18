@@ -1,6 +1,6 @@
 # Coal Country and the 2016 Election
 
-An interactive, scroll-driven D3 map about how the decline of coal mining in Ohio and Pennsylvania lined up with the 2016 U.S. presidential election.
+An interactive, scroll-driven D3 map about how the decline of coal mining in Ohio and Pennsylvania helped deliver both swing states, and the Electoral College, to Trump in the 2016 U.S. presidential election, and how both states swung sharply back toward Democrats in 2026, when Josh Shapiro (Pennsylvania, +22.4 points) and Amy Acton (Ohio, +7.9 points) won the governor's races. Every county in both states moved toward Democrats, though most coal counties still voted Republican.
 
 **Live:** https://ryanrickerts.dev/coal-election-2016-26/
 
@@ -15,6 +15,7 @@ This rebuilds my 2017 final project for CS 498 (Data Visualization) in the UIUC 
 - The "Focus on coal region" zoom is computed from state bounds instead of hard-coded pixel offsets.
 - Light and dark themes, plus support for `prefers-reduced-motion`.
 - Data fixes: Virginia is now correctly marked as a Clinton state, and the CSVs are normalized (no BOM, LF line endings).
+- New 2026 scene: each Ohio and Pennsylvania county's swing from the 2024 presidential race to the 2026 governor's race, with flipped counties outlined.
 
 ## Develop
 
@@ -37,3 +38,4 @@ All files are in [`public/data/`](public/data/):
 | `coalprod_change2015.csv` | Mines and coal employment by state, 2014 vs. 2015 | [EIA](https://www.eia.gov/coal/data.php) |
 | `coalprod_bycounty.csv` | Mines and production (short tons) by county | [EIA](https://www.eia.gov/coal/data.php) |
 | `countyelectdiffs_paoh.csv` | Republican presidential votes by county in OH and PA, 2012 vs. 2016 | Townhall.com |
+| `county_swing_2024_2026.csv` | 2024 President and 2026 Governor margins and swing by county in OH and PA (2026 unofficial). Built by [`scripts/build_county_swing.py`](scripts/build_county_swing.py) | [PA Dept. of State](https://www.electionreturns.pa.gov/), [Ohio SOS](https://liveresults.ohiosos.gov/), [Wikipedia (OH 2024 certified)](https://en.wikipedia.org/wiki/2024_United_States_presidential_election_in_Ohio) |
