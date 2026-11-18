@@ -208,7 +208,7 @@ blockquote {
 
 /* map layers */
 .counties path, .states path { stroke: none; }
-.county-mesh, .state-mesh, .nation-outline, .coal-outline, .focus-outline, .hover-outline {
+.county-mesh, .state-mesh, .nation-outline, .coal-outline, .flip-outline, .focus-outline, .hover-outline {
   fill: none;
   vector-effect: non-scaling-stroke;
   stroke-linejoin: round;
@@ -220,7 +220,8 @@ blockquote {
 #map[data-level="county"] .state-mesh { stroke: var(--state-mesh); stroke-width: 0.9; }
 .coal-outline { stroke: var(--coal); stroke-width: 1.6; opacity: 0; transition: opacity 0.5s; }
 .focus-outline { stroke: var(--focus); stroke-width: 2.2; opacity: 0; transition: opacity 0.5s; }
-.coal-outline.on, .focus-outline.on { opacity: 1; }
+.flip-outline { stroke: var(--focus); stroke-width: 2.2; opacity: 0; transition: opacity 0.5s; }
+.coal-outline.on, .flip-outline.on, .focus-outline.on { opacity: 1; }
 .hover-outline { stroke: var(--focus); stroke-width: 2; }
 
 #map[data-level="state"] .counties,
@@ -283,6 +284,7 @@ blockquote {
   font-size: 12px;
   font-weight: 600;
   color: #fff;
+  white-space: nowrap;
 }
 .tag.dem { background: var(--dem); }
 .tag.rep { background: var(--rep); }
