@@ -249,7 +249,11 @@
   "id": "23",
   "name": "ME",
   "winner": "D",
-  "votes": 4
+  "votes": 4,
+  "split": {
+   "D": 3,
+   "R": 1
+  }
  },
  {
   "id": "33",

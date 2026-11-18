@@ -57,6 +57,12 @@ const [us, electoral, countyCoal, stateCoal, countyElect] = await Promise.all([
 ]);
 
 const electById = new Map(electoral.map((d) => [d.id, d]));
+// Pledged electoral votes per candidate; states with a `split` (Maine) award electors by district.
+const electoralTotals = { D: 0, R: 0 };
+for (const s of electoral) {
+  if (s.split) for (const k in s.split) electoralTotals[k] += s.split[k];
+  else electoralTotals[s.winner] += s.votes;
+}
 const countyCoalById = new Map(countyCoal.map((d) => [d.id, d]));
 const stateCoalById = new Map(stateCoal.map((d) => [d.id, d]));
 const countyElectById = new Map(countyElect.map((d) => [d.id, d]));
@@ -104,13 +110,20 @@ const scenes = {
       return {
         title: stateName.get(d.id) ?? s.name,
         tag: { cls: dem ? "dem" : "rep", text: dem ? "Clinton" : "Trump" },
-        rows: [["Electoral votes", s.votes]],
+        rows: s.split
+          ? [
+              ["Electoral votes", s.votes],
+              ["Clinton", s.split.D],
+              ["Trump", s.split.R],
+            ]
+          : [["Electoral votes", s.votes]],
+        note: s.split ? "Electors split by congressional district" : null,
       };
     },
     legend: () =>
       swatches([
-        { color: cssVar("--dem"), label: "Clinton (D)" },
-        { color: cssVar("--rep"), label: "Trump (R)" },
+        { color: cssVar("--dem"), label: `Clinton (D) · ${electoralTotals.D}` },
+        { color: cssVar("--rep"), label: `Trump (R) · ${electoralTotals.R}` },
         { outline: cssVar("--focus"), label: "Ohio & Pennsylvania" },
       ]),
   },
